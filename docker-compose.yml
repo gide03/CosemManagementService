@@ -1,0 +1,30 @@
+services:
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - /var/lib/docker/volumes/emx-mongo-config/_data:/data/configdb:rw,z
+      - /var/lib/docker/volumes/emx-mongo-data/_data:/data/db:rw,z
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    environment:
+      - NGINX_HOST=emxcms.io
+      - NGINX_PORT=80

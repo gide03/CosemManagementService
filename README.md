@@ -1,30 +1,75 @@
-# 1. Brief
-This project contains a service to maintain COSEM release in a project.
+# Brief
 
-# 2. Running service
-There are 3 thing need to do here:
-1. Configure backend server
-2. Configure database, here the project designed to use noSQL database `mongodb`
-3. Configure frontend server
+COSEM Management System
 
-## 2.1. Configure backend server
-Go to backend directory `cd backend`, and follow this steps:
-1. Create python virtual environment. example: `python -m venv env`
-2. Activate the virtual envionrment. On linux: `source env/bin/activate` On windows: `env\Script\activate`
-3. Install the requrements: `pip install -r requirements.txt`
-4. Run the server: `flask run`
-5. Done!!
-> Note: if you want to share the access with other device, pass other parametre such as --port or --host.
+# 1. Minimal System Requirements
 
-## 2.2. Configure database
-Just install mongodb in your local device and run the service. 
-> TIP: we could install it in docker. Consider to setup docker volume for the container
+Minimum system: 4 service for frontend, backend, database, url router. You need to install:
 
-## 2.3. Configure frontend server
-Go to frontend directory `cd frontend`, and follow this steps:
-1. Install node package `npm install`, wait until all process done
-2. Build the frontend `npm run build`, after process done `build` directory will appear on frontend directory
-3. Run the serivice `serve -s build`
-4. Done !!!
+1. Python (3.xx ++)
+2. NodeJS
+3. MongoDB
+4. NGINX
 
-> TIP: it is better to configure reverse proxy using an application like nginx. On the client side, it is more better to go to xx.xx.xx.xx instead of xx.xx.xx.xx:3000
+## 1.1 Backend Server
+
+Enter `backend` as your workspace directory in a new terminal. Create python virtual environment here. In my case the virtual environment is `env`. Enter the virtual environment and follow the steps bellow:
+
+1. install all python requirements: `pip install -r requirements.txt`
+2. configure backend variables
+3. run the server: `flask run`
+
+Done!!. We could make it as service or run it on background mode.
+
+### 1.1.1 Backend configuration
+
+The backend need a connection to a dd variables configuratabase, in this project we are using noSQL only with `mongoDB`. Majorly, the database stores the UI states. The UI states contains all COSEM object information like it's object name, logical name, class id, version, attributes, methods and much more.
+
+To configure backend-database connection, go to `./backend/constant/config.json`. Change the variable correspond to the context or you can just leave it in default.
+
+I will provide you documentation in wiki
+
+## 1.2 Frontend Server
+
+Enter `frontend` as your workspace directory in a new terminal. Make sure `nodejs` and `npm` already installed in your device. Then follow the steps below:
+
+1. Install packages by execute `npm install`. Wait until the installation finish
+2. Configure the server, edit the config file at `./frontend/constant/config.json`. Change the file as you want or just leave it in default
+3. Build the source code, `npm build`. When finish, inside your workspace, there will appear a new directory named "build". Those are our artifact
+4. Start the server, `serve -s build`
+
+### 1.2.1 Frontend configuration
+
+The frontend is just a platfrom to transform information into User Interface in user's browser. Thus we need to connect to our backend server by fill the url of our backend. We can just leave it to use default value.
+
+I will provide you documentation in wiki
+
+## 1.3. MongoDB
+
+You can just download and install mongo db to your device, or other device that has installed it. Just, please to remember the ip:port address of this service must be set to backend configuration file.
+
+## 1.4. NGINX
+
+User don't care about service port. Edit nginx configuration to route url to our system. Install <a href='https://www.nginx.com/'>nginx</a> to your system and configure the nginx file. this is minimum configuration I use:
+
+```text
+server{
+        listen 80;
+        listen [::]:80;
+
+        # enable large data stream
+        client_max_body_size 100M;
+
+        location / {
+                proxy_pass http://localhost:3000;
+        }
+
+        location /api/ {
+                proxy_pass http://localhost:5000/;
+        }
+}
+```
+
+## 2. Dockerize project
+
+...

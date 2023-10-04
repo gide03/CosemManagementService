@@ -1,6 +1,6 @@
 FROM node:20-bookworm-slim
 
-# Buat environment dulu
+# Buat environment dulu untuk container
 # ENV GROUP_NAME RubyCMS
 ENV USER_NAME Gidion
 ENV USER_HOME=/home/${USER_NAME}
