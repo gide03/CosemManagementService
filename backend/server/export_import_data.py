@@ -199,7 +199,7 @@ def import_enum():
         )
         return jsonify(resp), 400
     
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    client = pymongo.MongoClient(MONGO_ADDRESS)
     database = client[project_name]
     database.drop_collection('enumsection') # drop the collection from prev version 
     section_collection = database['enumsection']
