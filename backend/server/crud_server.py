@@ -1,8 +1,14 @@
+import json
 import pymongo
 from flask import jsonify, request, blueprints
-from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from lib.ErrorMessage import ErrorMessage
 from datetime import datetime
+
+with open('constant/config.json', 'r') as f:
+    SERVER_CONFIG = json.load(f)
+    MONGO_SETTING = SERVER_CONFIG['mongodb']
+    MONGO_ADDRESS = f'mongodb://{MONGO_SETTING["address"]}:{MONGO_SETTING["port"]}/'
 
 # app = Flask(__name__)
 COSEM_Crud_Server = blueprints.Blueprint("COSEM Crud Server", __name__)
@@ -28,7 +34,7 @@ class ChangeLog:
         return ret_val
 
 def list_version(projectname):
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    client = pymongo.MongoClient(MONGO_ADDRESS)
     db = client[projectname]
     collection = db['changelogs']
     result = collection.find({"version_list": {"$exists":True}})
@@ -38,7 +44,7 @@ def list_version(projectname):
         return None, client
 
 def list_project():
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    client = pymongo.MongoClient(MONGO_ADDRESS)
     temp_database_list = client.list_database_names()
     database_list = []
     for _db in temp_database_list:
@@ -90,7 +96,7 @@ def create_project():
         return jsonify(resp), 400
     
     # create new database
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    client = pymongo.MongoClient(MONGO_ADDRESS)
     db = client[projectname]
     collection = db['changelogs']
     commit_message = f"Create new project: {projectname}. {description}"
@@ -115,7 +121,7 @@ def get_version_list(projectname):
 @jwt_required()
 def get_temporary_collection():
     identifier = get_jwt_identity()
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    client = pymongo.MongoClient(MONGO_ADDRESS)
     db = client['temporary']
     username = identifier[0]
     collection_list = []
@@ -230,7 +236,7 @@ def import_data():
         return jsonify(resp), 400
     
     # # create new collection
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    client = pymongo.MongoClient(MONGO_ADDRESS)
     identifier = get_jwt_identity()
     username = identifier[0]
     email = identifier[1]
@@ -277,7 +283,7 @@ def import_data():
 @COSEM_Crud_Server.route('/getcosemlist/<projectname>/<version>')
 def get_cosem_list(projectname, version):
     projectname = "PROJECT_"+projectname
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    client = pymongo.MongoClient(MONGO_ADDRESS)
     db = client[projectname]
     collection = db[version]
     cursor = collection.find()
@@ -287,7 +293,7 @@ def get_cosem_list(projectname, version):
 @COSEM_Crud_Server.route('/get/<projectname>/<version>/<objectname>')
 def get_cosem(projectname, version, objectname):
     projectname = "PROJECT_"+projectname
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    client = pymongo.MongoClient(MONGO_ADDRESS)
     db = client[projectname]
     collection = db[version]
     cursor = collection.find({"objectName":objectname})
@@ -315,7 +321,7 @@ def update_cosem():
         )
         return jsonify(resp), 400
     
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    client = pymongo.MongoClient(MONGO_ADDRESS)
     db = client[projectname]
     collection = db[version]
     find_result = collection.find({"objectName": objectname})
@@ -341,7 +347,7 @@ def update_cosem():
 def get_temporary_cosem_list(user):
     identitiy = get_jwt_identity()
     # projectname = projectname
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    client = pymongo.MongoClient(MONGO_ADDRESS)
     db = client['temporary']
     collection = db[user]
     cursor = collection.find()
@@ -352,7 +358,7 @@ def get_temporary_cosem_list(user):
 @jwt_required()
 def get_temporary_cosem( version, objectname):
     identity = get_jwt_identity()
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    client = pymongo.MongoClient(MONGO_ADDRESS)
     db = client['temporary']
     collection = db[version]
     cursor = collection.find({"objectName":objectname})
@@ -383,7 +389,7 @@ def update_temporary_cosem():
         )
         return jsonify(resp), 400
     
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    client = pymongo.MongoClient(MONGO_ADDRESS)
     db = client[projectname]
     collection = db[version]
     find_result = collection.find({"objectName": objectname})
@@ -420,7 +426,7 @@ def delete_collection():
         )
         return jsonify(resp), 400
 
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    client = pymongo.MongoClient(MONGO_ADDRESS)
     
     # Check is the project name is inside database list
     if projectname in list_project():

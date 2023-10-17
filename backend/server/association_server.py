@@ -1,10 +1,15 @@
 import pymongo
-import ssl
+import json
 from flask import jsonify, request, blueprints
 from flask_jwt_extended import jwt_required, create_access_token, get_jwt_identity
 from lib.ErrorMessage import ErrorMessage
 
-# app = Flask(__name__)
+with open('constant/config.json', 'r') as f:
+    SERVER_CONFIG = json.load(f)
+    MONGO_SETTING = SERVER_CONFIG['mongodb']
+    MONGO_ADDRESS = f'mongodb://{MONGO_SETTING["address"]}:{MONGO_SETTING["port"]}/'
+    
+    # print('ASSOCIATION SERVER: ', MONGO_ADDRESS)
 Association_Server = blueprints.Blueprint("AssociationServer", __name__)
 
 chelenges = {}
@@ -39,7 +44,7 @@ def login():
         return jsonify(resp), 400
 
     # Fetch user data by email
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    client = pymongo.MongoClient(MONGO_ADDRESS)
     db = client['user']
     collection = db['users']
     user_find_result = collection.find({"email":email})
@@ -94,7 +99,7 @@ def register():
         return jsonify(resp), 400
 
     # Get the list of users
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    client = pymongo.MongoClient(MONGO_ADDRESS)
     db = client['user']
     collection = db['users']
 
@@ -149,7 +154,7 @@ def change_password():
         return jsonify(resp), 400
 
     # update password
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    client = pymongo.MongoClient(MONGO_ADDRESS)
     db = client['user']
     collection = db['users']
     filter_criteria = {"email": email}
@@ -173,7 +178,7 @@ def change_password_getchelenge():
         return jsonify(resp), 400
     
     # check if the email is registered or not
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    client = pymongo.MongoClient(MONGO_ADDRESS)
     db = client['user']
     collection = db['users']
     user_find_result = collection.find({"email":data['email']})
@@ -239,7 +244,7 @@ def change_password_verify_chelenge():
     chelenge = data['chelenge']
 
     # check if the email is registered or not
-    client = pymongo.MongoClient('mongodb://localhost:27017/')
+    client = pymongo.MongoClient(MONGO_ADDRESS)
     db = client['user']
     collection = db['users']
     user_find_result = collection.find({"email":email})
