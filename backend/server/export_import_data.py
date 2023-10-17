@@ -6,6 +6,11 @@ from lib.XML_Import import WorkFile_Manager
 from lib.ExportDatabase import DBExportAgent
 import pymongo
 
+with open('constant/config.json', 'r') as f:
+    SERVER_CONFIG = json.load(f)
+    MONGO_SETTING = SERVER_CONFIG['mongodb']
+    MONGO_ADDRESS = f'mongodb://{MONGO_SETTING["address"]}:{MONGO_SETTING["port"]}/'
+
 Export_Import_Data = blueprints.Blueprint('Import Data', __name__)
 
 @Export_Import_Data.route('/')
