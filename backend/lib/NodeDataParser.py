@@ -245,24 +245,24 @@ def cast_value(dtype, value):
         return [int(i) for i in value.split(',')]
     if dtype == 'VisibleStringDTO':
         output = []
-        try:
-            return int(value)
-        except:
-            if ',' in value:
-                return [int(i) for i in value.split(',')]
-            for i in value:
-                output.append(ord(i))
-            return output
+        if isinstance(i, int):
+            value = str(value)
+            
+        if ',' in value:
+            return [int(i) for i in value.split(',')]
+        for i in value:
+            output.append(ord(i))
+        return output
     if dtype == 'Float32DTO':
         if value == '':
             return 0
         # transformed_value = struct.unpack('!f', bytes.fromhex(value))[0]
-        transformed_value = [int(value[i:i+1], 16) for i in range(0, len(value), 2)]
+        transformed_value = [int(value[i:i+2], 16) for i in range(0, len(value), 2)]
         return transformed_value
 
     if dtype == 'Float64DTO':
         # transformed_value = struct.unpack('!d', bytes.fromhex(value))[0]
-        transformed_value = [int(value[i:i+1], 16) for i in range(0, len(value), 2)]
+        transformed_value = [int(value[i:i+2], 16) for i in range(0, len(value), 2)]
         return transformed_value
 
     if dtype == 'BitStringDTO':

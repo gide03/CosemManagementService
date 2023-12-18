@@ -1,6 +1,6 @@
 {
   "mongodb": {
-    "address": "localhost",
+    "address": "10.23.40.185",
     "port": 27017
   }
 }

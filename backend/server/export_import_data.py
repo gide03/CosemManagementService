@@ -71,7 +71,7 @@ def import_data():
             output.extend(flatten(child))
         return output
     
-    client = pymongo.MongoClient('mongodb://10.23.40.185:27017/')
+    client = pymongo.MongoClient(MONGO_ADDRESS)
     reference_database = client[project_to_merge]
     #
     # MERGE COSEM

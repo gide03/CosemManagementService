@@ -24,7 +24,7 @@ class DBExportAgent:
     def __init__(self, project_target, version_target) -> None:
         self.project_target = "PROJECT_" + project_target
         self.version_target = version_target
-        self.mongo_client = pymongo.MongoClient('mongodb://localhost:27017/')
+        self.mongo_client = pymongo.MongoClient('mongodb://10.23.40.185:27017/')
         
         # check database list
         self.db_list = []
