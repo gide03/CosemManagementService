@@ -245,13 +245,13 @@ def cast_value(dtype, value):
         return [int(i) for i in value.split(',')]
     if dtype == 'VisibleStringDTO':
         output = []
-        if isinstance(i, int):
-            value = str(value)
-            
-        if ',' in value:
-            return [int(i) for i in value.split(',')]
-        for i in value:
-            output.append(ord(i))
+        try:
+            if ',' in value:
+                return [int(i) for i in value.split(',')]
+            for i in value:
+                output.append(ord(i))
+        except:
+            pass
         return output
     if dtype == 'Float32DTO':
         if value == '':
