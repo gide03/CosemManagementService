@@ -267,11 +267,12 @@ def cast_value(dtype, value):
 
     if dtype == 'BitStringDTO':
         if value == '':
-            return 0
+            return [0,0]
         if ',' in value:
             output = get_bit_string(value.replace(',',''))
             return [len(value), output]
-        return int(value)
+        output = get_bit_string(value)
+        return [len(value), output]
 
     if dtype == 'NullDTO':
         return None

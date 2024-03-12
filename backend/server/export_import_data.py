@@ -100,9 +100,19 @@ def import_data():
                         ref and src is actually Node instance in JSON format
                     '''
                     src['modifier'] = ref['modifier']
-                    src['defaultValue'] = ref['defaultValue']
+                    # Exceptional for dtype enumerated
+                    if src['_dtype'] == 'EnumeratedDTO':
+                        if int(src['defaultValue']) not in src['enumChoices']:
+                            pass
+                        else:
+                            src['defaultValue'] = ref['defaultValue']
+                    else:
+                        src['defaultValue'] = ref['defaultValue']
                     src['minValue'] = ref['minValue']
                     src['maxValue'] = ref['maxValue']
+                    
+                        
+                    
                     if len(ref['children']) > 0:
                         for ref_child, src_child in zip (ref['children'], src['children']):
                             merge_node(ref_child, src_child) # recursive
