@@ -140,12 +140,20 @@ const ControlPanel = ({ debug = false }) => {
       return;
     }
 
-    handler.onDeleteVersion();
+    handler.onDeleteVersion(item);
   };
 
   const onClickObject = (item) => {
     console.log(`Clicked cosem ${item}`);
-    setActiveObject(item);
+
+    // INTERNAL COMPONENT FUNCTIONALITY
+    if (handler == null || handler.onClickObject === undefined) {
+      console.warn("(onClickObject) Not implemented yet");
+      setActiveObject(item);
+      return;
+    }
+
+    handler.onClickObject(item);
   };
 
   if (meterList.length === 0) {
@@ -153,13 +161,14 @@ const ControlPanel = ({ debug = false }) => {
   }
 
   return (
-    <div className="App">
+    <section id="content-selector">
       {debug && (
         <div>
           <p>Debug Control Panel</p>
           <ul>
             <li>Active Project: {activeProject}</li>
             <li>Active Version: {activeVersion}</li>
+            <li>Active Object : {activeObject}</li>
           </ul>
         </div>
       )}
@@ -170,42 +179,35 @@ const ControlPanel = ({ debug = false }) => {
         )
       }
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-        }}
-      >
-        <PanelContainer
-          title="Meter Type"
-          itemList={meterList}
-          activeItem={activeProject}
-          showSearchBox={false}
-          showDeleteItem={false}
-          onDelete={onDeleteProject}
-          onItemClicked={onClickProject}
-        />
+      <PanelContainer
+        title="Meter Type"
+        itemList={meterList}
+        activeItem={activeProject}
+        showSearchBox={false}
+        showDeleteItem={false}
+        onDelete={onDeleteProject}
+        onItemClicked={onClickProject}
+      />
 
-        <PanelContainer
-          title="Version"
-          itemList={versionList}
-          activeItem={activeVersion}
-          showSearchBox={false}
-          showDeleteItem={true}
-          onDelete={onDeleteVersion}
-          onItemClicked={onClickVersion}
-        ></PanelContainer>
+      <PanelContainer
+        title="Version"
+        itemList={versionList}
+        activeItem={activeVersion}
+        showSearchBox={false}
+        showDeleteItem={true}
+        onDelete={onDeleteVersion}
+        onItemClicked={onClickVersion}
+      ></PanelContainer>
 
-        <PanelContainer
-          title="Cosem object list"
-          itemList={cosemList}
-          activeItem={activeObject}
-          showSearchBox={true}
-          showDeleteItem={false}
-          onItemClicked={onClickObject}
-        ></PanelContainer>
-      </div>
-    </div>
+      <PanelContainer
+        title="Cosem object list"
+        itemList={cosemList}
+        activeItem={activeObject}
+        showSearchBox={true}
+        showDeleteItem={false}
+        onItemClicked={onClickObject}
+      ></PanelContainer>
+    </section>
   );
 };
 

@@ -3,8 +3,8 @@ import styled from "styled-components";
 const StyledPanelContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 40rem;
   width: 20rem;
+  height: 100%;
   border: 1px solid black;
   div {
     box-sizing: border-box;
@@ -56,7 +56,8 @@ const StyledScrollBoxItem = styled.div`
   justify-content: space-between;
   width: 100%;
   height: 2rem;
-  padding: 0.5rem;
+  padding: 0.3rem 0.5rem 0.3rem 0.5rem;
+  font-size: smaller;
 `;
 
 const PanelContainer = ({

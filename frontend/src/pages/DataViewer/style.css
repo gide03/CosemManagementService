@@ -1,0 +1,32 @@
+#page-dataviewer {
+  width: 100vw;
+  max-width: 100vw;
+  height: 100vh;
+  max-height: 100vh;
+}
+
+#content-selector {
+  width: 100%;
+  height: 40vh;
+  max-height: 40vh;
+
+  padding: 1rem;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+#content-presentation {
+  width: 100%;
+  height: 60vh;
+  max-height: 60vh;
+
+  padding: 1rem;
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
