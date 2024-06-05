@@ -5,6 +5,7 @@ import "./style.css";
 import ControlPanel from "./ControlPanel";
 import { PanelHandlerContext } from "./Context/PanelHandlerContext";
 import { GuiStateContext } from "./Context/AppContext";
+import { ReqApi } from "./Hook/ApiReq";
 
 import NodeView from "./Components/NodeItem";
 import { WorkItemPresentationContext } from "./Context/WorkitemContext";
@@ -44,44 +45,27 @@ const DataViewerPage = () => {
    * CONTROL PANEL HANLDER
    */
   //TODO: Override GuiStateDefault. NOTE: Need to sync to the context file
-
   const getProjectList = () => {
     console.log("Get project list");
-    axios
-      .get("http://10.23.40.185/api/project/listproject")
-      .then((response) => {
-        let respData = response.data;
-        console.log(respData);
-        console.debug("Update meter list");
-        setMeterList(respData);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    ReqApi.getProjectList(setMeterList);
   };
 
   //TODO: Override control panel event handler
   const onClickProject = (item) => {
+    if (item === activeProject) {
+      return;
+    }
     console.log(`[Page::onClickProject] onClickProject for project ${item}`);
     console.log(`[Page::onClickProject] get version list of ${item}`);
-    axios
-      .get(`http://10.23.40.185/api/project/listversion/${item}`)
-      .then((response) => {
-        let respData = response.data;
-        console.debug("[Page::onClickProject] result", respData);
-        console.debug("[Page::onClickProject] update active project");
-        setActiveProject(item);
-        console.debug("[Page::onClickProject] update version list");
-        setVersionList(respData);
+    ReqApi.getVersionList(item, setVersionList);
+    setActiveProject(item);
 
-        if (item !== activeProject) {
-          setCosemList([]);
-          setActiveVersion("");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    setActiveWorkItem(null);
+    setActiveNodeId("");
+    setVersionList([]);
+    setActiveVersion("");
+    setCosemList([]);
+    setActiveObject("");
   };
 
   const onClickVersion = (item) => {
@@ -89,28 +73,12 @@ const DataViewerPage = () => {
     console.log(
       `[Page::onClickVersion] get cosem list for project ${activeProject} v${item}`
     );
-
-    axios
-      .get(
-        `http://10.23.40.185/api/project/getcosemlist/${activeProject}/${item}`
-      )
-      .then((response) => {
-        let respData = response.data;
-        console.debug("[Page::onClickVersion] result", respData);
-        console.debug("[Page::onClickVersion] cosem list");
-        setActiveVersion(item);
-        console.debug("[Page::onClickVersion] cosem list");
-
-        setCosemList(respData);
-
-        if (activeVersion !== item) {
-          setActiveObject("");
-          setActiveWorkItem(null);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    if (activeVersion !== item) {
+      setActiveObject("");
+      setActiveWorkItem(null);
+      setActiveVersion(item);
+      ReqApi.getCosemList(activeProject, item, setCosemList);
+    }
   };
 
   function onDeleteProject(item) {
@@ -118,25 +86,13 @@ const DataViewerPage = () => {
   }
 
   function onClickObject(item) {
+    if (item === activeObject) {
+      return;
+    }
     console.log(`[Page::onClickObject] handler object on click ${item}`);
-
-    axios
-      .get(
-        `http://10.23.40.185/api/project/get/${activeProject}/${activeVersion}/${item}`
-      )
-      .then((response) => {
-        let respData = response.data;
-        if (item !== activeObject) {
-          setActiveNodeId(null);
-        }
-        console.debug("[Page::onClickObject] result", respData);
-        setActiveObject(item);
-        console.debug("[Page::onClickObject] Update active object data");
-        setActiveWorkItem(respData);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    ReqApi.getCosemInfo(activeProject, activeVersion, item, setActiveWorkItem);
+    setActiveObject(item);
+    setActiveNodeId(null);
   }
 
   //TODO: Generate new context value
