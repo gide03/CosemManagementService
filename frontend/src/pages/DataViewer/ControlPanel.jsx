@@ -1,11 +1,10 @@
 // import PanelContainer from "./components/Containers";
 // import WaitingDialog from "./components/WaitingDialog";
 // import "./styles.css";
-import { useState, useContext } from "react";
+import { useContext } from "react";
 import { GuiStateContext } from "./Context/AppContext";
 import { PanelHandlerContext } from "./Context/PanelHandlerContext";
 import PanelContainer from "./Components/Panel";
-import axios from "axios";
 
 const data_meterList = ["Dev", "RUBY", "SPAIN"];
 const data_versionList = {

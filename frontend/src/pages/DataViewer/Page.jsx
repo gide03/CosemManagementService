@@ -6,24 +6,44 @@ import ControlPanel from "./ControlPanel";
 import { PanelHandlerContext } from "./Context/PanelHandlerContext";
 import { GuiStateContext } from "./Context/AppContext";
 
+import NodeView from "./Components/NodeItem";
+import { WorkItemPresentationContext } from "./Context/WorkitemContext";
+
 const DataViewerPage = () => {
+  const [activeWorkItem, setActiveWorkItem] = useState(null); // JSON data (All data in string)
+  const [activeNodeTreeId, setActiveNodeId] = useState(""); // Tree Node ID in string
+  const [meterList, setMeterList] = useState([]); // Project list (list of string)
+  const [activeProject, setActiveProject] = useState(""); // Project name in string
+  const [versionList, setVersionList] = useState([]); // Version list (list of string)
+  const [activeVersion, setActiveVersion] = useState(""); // Version name in string
+  const [cosemList, setCosemList] = useState([]); // List of project name, (list of string)
+  const [activeObject, setActiveObject] = useState("");
+
   /**
    * OBJECT PRESENTATION
    */
-  const [activeObjectData, setObjectData] = useState("");
+  const updateWorkItem = (item) => {
+    console.log(`[Page::updateWorkItem] update work item`);
+    setActiveWorkItem(item);
+  };
 
+  const nodeOnClicked = (node) => {
+    console.log(`[Page::nodeOnClicked] item clicked node id ${node.id}`);
+    setActiveNodeId(node.id);
+  };
+
+  const ObjectPresentationContextValue = {
+    workItem: activeWorkItem,
+    updateWorkItem: updateWorkItem,
+    onClicked: nodeOnClicked,
+    activeNodeTreeId: activeNodeTreeId,
+  };
   //
 
   /**
    * CONTROL PANEL HANLDER
    */
   //TODO: Override GuiStateDefault. NOTE: Need to sync to the context file
-  const [meterList, setMeterList] = useState([]);
-  const [activeProject, setActiveProject] = useState("");
-  const [versionList, setVersionList] = useState([]);
-  const [activeVersion, setActiveVersion] = useState("");
-  const [activeObject, setActiveObject] = useState("");
-  const [cosemList, setCosemList] = useState([]);
 
   const getProjectList = () => {
     console.log("Get project list");
@@ -85,7 +105,7 @@ const DataViewerPage = () => {
 
         if (activeVersion !== item) {
           setActiveObject("");
-          setObjectData(null);
+          setActiveWorkItem(null);
         }
       })
       .catch((error) => {
@@ -100,16 +120,19 @@ const DataViewerPage = () => {
   function onClickObject(item) {
     console.log(`[Page::onClickObject] handler object on click ${item}`);
 
-    // http://10.23.40.185/api/project/get/SPAIN/9.05%2020240515%200935/EnergyReactiveIncrBillingQ3
     axios
       .get(
         `http://10.23.40.185/api/project/get/${activeProject}/${activeVersion}/${item}`
       )
       .then((response) => {
         let respData = response.data;
+        if (item !== activeObject) {
+          setActiveNodeId(null);
+        }
         console.debug("[Page::onClickObject] result", respData);
         setActiveObject(item);
-        setObjectData(respData);
+        console.debug("[Page::onClickObject] Update active object data");
+        setActiveWorkItem(respData);
       })
       .catch((error) => {
         console.log(error);
@@ -140,8 +163,6 @@ const DataViewerPage = () => {
   };
   // END PANEL HANDLER
 
-  //   <GuiStateContext.Provider value={GuiStateDefault}>
-  //     <PanelHandlerContext.Provider value={ControlPanelEvtHandler}>
   return (
     <GuiStateContext.Provider value={GuiStateDefault}>
       <PanelHandlerContext.Provider value={ControlPanelEvtHandler}>
@@ -149,10 +170,40 @@ const DataViewerPage = () => {
           {/* <section id="content-selector"> */}
           <ControlPanel></ControlPanel>
           {/* </section> */}
-          <section id="content-presentation">
-            <div>Object tree</div>
-            <div>Node presentation</div>
-          </section>
+          {/* <WorkItemPresentationContext.Provider
+            value={ObjectPresentationContextValue}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                height: "60vh",
+              }}
+            >
+              {activeWorkItem !== null ? (
+                <div id="preview-titlebar">
+                  Preview: <span className="hl">{activeObject}</span> Obis:
+                  <span className="hl">{activeWorkItem.logicalName}</span> Att:
+                  <span className="hl">
+                    {activeNodeTreeId === "" ? "-" : activeNodeTreeId}
+                  </span>
+                </div>
+              ) : (
+                <div id="preview-titlebar">
+                  Preview: <span className="hl">-</span> Obis:
+                  <span className="hl">-</span> Att:
+                  <span className="hl">-</span>
+                </div>
+              )}
+              <div id="content-presentation">
+                <div id="attribute-tree-presentation">
+                  <NodeView />
+                </div>
+                <div id="attribute-information">Node presentation</div>
+              </div>
+            </div>
+          </WorkItemPresentationContext.Provider> */}
         </div>
       </PanelHandlerContext.Provider>
     </GuiStateContext.Provider>

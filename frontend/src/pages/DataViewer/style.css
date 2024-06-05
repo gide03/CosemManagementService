@@ -1,3 +1,7 @@
+section {
+  box-sizing: border-box;
+}
+
 #page-dataviewer {
   width: 100vw;
   max-width: 100vw;
@@ -19,14 +23,32 @@
 }
 
 #content-presentation {
-  width: 100%;
-  height: 60vh;
-  max-height: 60vh;
-
-  padding: 1rem;
   box-sizing: border-box;
+  display: flex;
+}
+
+#preview-titlebar {
+  height: 2rem;
+  background-color: rgb(230, 230, 230);
 
   display: flex;
   align-items: center;
-  justify-content: space-between;
+}
+
+#attribute-tree-presentation {
+  width: 20vw;
+  overflow: scroll;
+  height: calc(60vh - 2rem);
+  border: 1px solid black;
+}
+
+.hl {
+  font-weight: bolder;
+  font-style: italic;
+
+  padding: 0.1em;
+  box-sizing: border-box;
+  background-color: rgb(221, 221, 221);
+  font-family: "Courier New", Courier, monospace;
+  margin-right: 1rem;
 }
