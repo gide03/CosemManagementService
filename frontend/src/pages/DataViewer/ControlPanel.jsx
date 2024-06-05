@@ -1,6 +1,3 @@
-// import PanelContainer from "./components/Containers";
-// import WaitingDialog from "./components/WaitingDialog";
-// import "./styles.css";
 import { useContext } from "react";
 import { GuiStateContext } from "./Context/AppContext";
 import { PanelHandlerContext } from "./Context/PanelHandlerContext";

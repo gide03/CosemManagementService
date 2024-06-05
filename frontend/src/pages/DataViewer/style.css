@@ -23,16 +23,45 @@ section {
 }
 
 #content-presentation {
-  box-sizing: border-box;
   display: flex;
+  width: 100%;
+  height: calc(100vh - 40vh);
+  box-sizing: border-box;
+
+  flex-direction: column;
+  border: 1px solid black;
 }
 
-#preview-titlebar {
-  height: 2rem;
+#preview-title {
+  width: 100%;
   background-color: rgb(230, 230, 230);
 
   display: flex;
   align-items: center;
+  justify-content: space-between;
+
+  padding: 0.5rem;
+  box-sizing: border-box;
+
+  .prv-obis {
+    font-style: italic;
+    font-weight: bold;
+    /* margin-left: 1rem; */
+  }
+}
+
+#preview-content {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  box-sizing: border-box;
+  padding-left: 1rem;
+
+  overflow: hidden;
 }
 
 #attribute-tree-presentation {

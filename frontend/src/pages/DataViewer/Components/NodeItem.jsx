@@ -49,6 +49,15 @@ const ItemWrapper = styled.div`
   }
 `;
 
+const ListView = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 100%;
+  width: 30%;
+  overflow: scroll;
+`;
+
 const NodeTree = ({
   element,
   activeNodeTreeId,
@@ -161,7 +170,7 @@ const NodeView = () => {
   console.log(`Render nodeview`);
   const attributes = workItem.attribute;
   return (
-    <>
+    <ListView>
       {attributes.map((element, idx) => {
         return (
           <ItemWrapper key={`Att ${idx + 1}`}>
@@ -177,7 +186,7 @@ const NodeView = () => {
           </ItemWrapper>
         );
       })}
-    </>
+    </ListView>
   );
 };
 

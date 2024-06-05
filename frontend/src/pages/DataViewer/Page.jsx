@@ -3,12 +3,13 @@ import axios from "axios";
 import "./style.css";
 
 import ControlPanel from "./ControlPanel";
+import AttributePresentation from "./Components/AttributePresentation";
+import NodeView from "./Components/NodeItem";
+
+import { WorkItemPresentationContext } from "./Context/WorkitemContext";
 import { PanelHandlerContext } from "./Context/PanelHandlerContext";
 import { GuiStateContext } from "./Context/AppContext";
 import { ReqApi } from "./Hook/ApiReq";
-
-import NodeView from "./Components/NodeItem";
-import { WorkItemPresentationContext } from "./Context/WorkitemContext";
 
 const DataViewerPage = () => {
   const [activeWorkItem, setActiveWorkItem] = useState(null); // JSON data (All data in string)
@@ -123,43 +124,45 @@ const DataViewerPage = () => {
     <GuiStateContext.Provider value={GuiStateDefault}>
       <PanelHandlerContext.Provider value={ControlPanelEvtHandler}>
         <div id="page-dataviewer">
-          {/* <section id="content-selector"> */}
-          <ControlPanel></ControlPanel>
-          {/* </section> */}
-          {/* <WorkItemPresentationContext.Provider
+          <section id="content-selector">
+            <ControlPanel></ControlPanel>
+          </section>
+          <WorkItemPresentationContext.Provider
             value={ObjectPresentationContextValue}
           >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                height: "60vh",
-              }}
-            >
-              {activeWorkItem !== null ? (
-                <div id="preview-titlebar">
-                  Preview: <span className="hl">{activeObject}</span> Obis:
-                  <span className="hl">{activeWorkItem.logicalName}</span> Att:
-                  <span className="hl">
-                    {activeNodeTreeId === "" ? "-" : activeNodeTreeId}
-                  </span>
-                </div>
-              ) : (
-                <div id="preview-titlebar">
-                  Preview: <span className="hl">-</span> Obis:
-                  <span className="hl">-</span> Att:
-                  <span className="hl">-</span>
-                </div>
-              )}
-              <div id="content-presentation">
-                <div id="attribute-tree-presentation">
-                  <NodeView />
-                </div>
-                <div id="attribute-information">Node presentation</div>
+            <div id="content-presentation">
+              <div id="preview-title">
+                {activeWorkItem && (
+                  <>
+                    <span>{`${activeObject}`}</span>
+                    <div>
+                      <span className="prv-obis">
+                        {activeWorkItem.logicalName}
+                      </span>
+                    </div>
+                    <div>
+                      {activeWorkItem === null
+                        ? ""
+                        : `Class ID: ${activeWorkItem.classId}`}
+                    </div>
+                    <div>
+                      {activeNodeTreeId === null
+                        ? ""
+                        : `Attribute: ${activeNodeTreeId}`}
+                    </div>
+                  </>
+                )}
+              </div>
+              <div id="preview-content">
+                {activeWorkItem && (
+                  <>
+                    <NodeView></NodeView>
+                    <AttributePresentation></AttributePresentation>
+                  </>
+                )}
               </div>
             </div>
-          </WorkItemPresentationContext.Provider> */}
+          </WorkItemPresentationContext.Provider>
         </div>
       </PanelHandlerContext.Provider>
     </GuiStateContext.Provider>
