@@ -20,6 +20,7 @@ const DataViewerPage = () => {
   const [activeVersion, setActiveVersion] = useState(""); // Version name in string
   const [cosemList, setCosemList] = useState([]); // List of project name, (list of string)
   const [activeObject, setActiveObject] = useState("");
+  const [activeNode, setActiveNode] = useState(null); // Information of attribute node
 
   /**
    * OBJECT PRESENTATION
@@ -32,6 +33,7 @@ const DataViewerPage = () => {
   const nodeOnClicked = (node) => {
     console.log(`[Page::nodeOnClicked] item clicked node id ${node.id}`);
     setActiveNodeId(node.id);
+    setActiveNode(node);
   };
 
   const ObjectPresentationContextValue = {
@@ -39,6 +41,7 @@ const DataViewerPage = () => {
     updateWorkItem: updateWorkItem,
     onClicked: nodeOnClicked,
     activeNodeTreeId: activeNodeTreeId,
+    activeNode: activeNode,
   };
   //
 
@@ -93,7 +96,8 @@ const DataViewerPage = () => {
     console.log(`[Page::onClickObject] handler object on click ${item}`);
     ReqApi.getCosemInfo(activeProject, activeVersion, item, setActiveWorkItem);
     setActiveObject(item);
-    setActiveNodeId(null);
+    setActiveNodeId("");
+    setActiveNode(null);
   }
 
   //TODO: Generate new context value
@@ -157,7 +161,9 @@ const DataViewerPage = () => {
                 {activeWorkItem && (
                   <>
                     <NodeView></NodeView>
-                    <AttributePresentation></AttributePresentation>
+                    {activeNode !== null && (
+                      <AttributePresentation></AttributePresentation>
+                    )}
                   </>
                 )}
               </div>
