@@ -167,11 +167,13 @@ const NodeView = () => {
   if (workItem == null) {
     return <></>;
   }
-  console.log(`Render nodeview`);
   const attributes = workItem.attribute;
   return (
     <ListView>
       {attributes.map((element, idx) => {
+        if (element === null){
+          return <></>
+        }
         return (
           <ItemWrapper key={`Att ${idx + 1}`}>
             <div>

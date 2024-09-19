@@ -107,22 +107,116 @@ const AttributeInformation = () => {
   );
 };
 
-const AttributePresentation = () => {
-  const mContext = useContext(WorkItemPresentationContext);
-  const activeNode = mContext.activeNode;
+const DetailedInformation = () => {
+  const {activeNode} = useContext(WorkItemPresentationContext);
   const [defaultValue, setDefaultValue] = useState(activeNode.defaultValue);
   const [minValue, setMinValue] = useState(activeNode.minValue);
   const [maxValue, setMaxValue] = useState(activeNode.maxValue);
-  const [accessRight, setAccessRight] = useState(activeNode.accessRight);
   const [modifier, setModifier] = useState(activeNode.modifier);
 
-  useEffect(() => {
-    setDefaultValue(activeNode.defaultValue);
-    setMinValue(activeNode.minValue);
-    setMaxValue(activeNode.maxValue);
-    setAccessRight(activeNode.accessRight);
-    setModifier(activeNode.modifier);
-  }, [mContext.activeNode]);
+  const update_defaultValue = (value) => {
+    activeNode.defaultValue = value;
+    setDefaultValue(value);
+  }
+  const update_minValue = (value) => {
+    activeNode.minValue = value;
+    setMinValue(value);
+  }
+  const update_maxValue = (value) => {
+    activeNode.maxValue = value;
+    setMaxValue(value);
+  }
+  const update_modifier = (value) => {
+    activeNode.modifier = value;
+    setModifier(value);
+  }
+
+  /**
+   * TODO [1]: Render Structure data structure
+   * TODO [2]: Render Array
+   * TODO [3]: Render if data could be enumerated
+   * TODO [4]: 
+   */
+  console.log(activeNode);
+  if (activeNode._dtype === 'Structure'){
+    return <div>Structure</div>
+  }
+  else if (activeNode._dtype === 'Array'){
+    return <div>Array</div>
+  }
+  else if (
+    activeNode._dtype === 'EnumeratedDTO' ||
+    Object.keys(activeNode.enumChoices).length > 0
+  ){
+    return <div>
+      <h3>Enumeration Info</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Enumeration Code</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            Object.keys(activeNode.enumChoices).map((idx) => {
+              return <tr key={`${activeNode.title}-enum-info-${idx}`}>
+                <td>{idx}</td>
+                <td>{activeNode.enumChoices[idx]}</td>
+              </tr>
+            })
+          }
+        </tbody>
+      </table>
+
+      <h3>Value Info</h3>
+      <table>
+        <tbody>
+          <tr>
+            <th>Default Value</th>
+            <td>
+              <select value={activeNode.defaultValue} onChange={(e)=>{update_defaultValue(e.target.value)} }>
+                {
+                  Object.keys(activeNode.enumChoices).map((enum_key) => {
+                    console.log(activeNode.defaultValue);
+                    return <option key={`${activeNode.title}-option-${enum_key}`} value={enum_key}>{`(${enum_key}) ${activeNode.enumChoices[enum_key]}`}</option>
+                  })
+                }
+              </select>
+
+            </td>
+          </tr>
+          <tr>
+            <th>Modifier</th>
+            <td><input type='text' defaultValue={activeNode.modifier} onChange={(e)=>{update_modifier(e.target.value)}}></input></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  }
+  else{
+    return <div>{activeNode._dtype}</div>
+  }
+  
+}
+
+const AttributePresentation = () => {
+  const mContext = useContext(WorkItemPresentationContext);
+  // const activeNode = mContext.activeNode;
+  // const [dtype, setDtype] = useState(activeNode.dtype);
+  // const [defaultValue, setDefaultValue] = useState(activeNode.defaultValue);
+  // const [minValue, setMinValue] = useState(activeNode.minValue);
+  // const [maxValue, setMaxValue] = useState(activeNode.maxValue);
+  // const [accessRight, setAccessRight] = useState(activeNode.accessRight);
+  // const [modifier, setModifier] = useState(activeNode.modifier);
+
+  // useEffect(() => {
+  //   setDefaultValue(activeNode.defaultValue);
+  //   setMinValue(activeNode.minValue);
+  //   setMaxValue(activeNode.maxValue);
+  //   setAccessRight(activeNode.accessRight);
+  //   setModifier(activeNode.modifier);
+  // }, [mContext.activeNode]);
 
   return (
     <ContentWrapper>
@@ -132,7 +226,9 @@ const AttributePresentation = () => {
       <GroupBox title="Attribute Information">
         <AttributeInformation></AttributeInformation>
       </GroupBox>
-      <GroupBox title="Details"></GroupBox>
+      <GroupBox title="Details">
+        <DetailedInformation></DetailedInformation>
+      </GroupBox>
     </ContentWrapper>
   );
 };
