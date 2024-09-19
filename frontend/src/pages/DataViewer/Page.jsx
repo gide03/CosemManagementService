@@ -11,7 +11,7 @@ import { PanelHandlerContext } from "./Context/PanelHandlerContext";
 import { GuiStateContext } from "./Context/AppContext";
 import { ReqApi } from "./Hook/ApiReq";
 
-const DataViewerPage = () => {
+const DataViewerPage = ({AssociationContext}) => {
   const [activeWorkItem, setActiveWorkItem] = useState(null); // JSON data (All data in string)
   const [activeNodeTreeId, setActiveNodeId] = useState(""); // Tree Node ID in string
   const [meterList, setMeterList] = useState([]); // Project list (list of string)
@@ -114,6 +114,7 @@ const DataViewerPage = () => {
     setActiveObject,
     cosemList,
     setCosemList,
+    AssociationContext
   };
   const ControlPanelEvtHandler = {
     getProjectList: getProjectList,

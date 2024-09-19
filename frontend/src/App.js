@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components'
 import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
-import DataViewer from './PageDataViewer';
+import DataViewerPage from './pages/DataViewer/Page';
 import LoginPage from './Login';
 import RegisterPage from './Register';
 import AccountPage from './Account';
@@ -84,7 +84,6 @@ function App() {
   }, [])
 
 
-
   return (
     <Router>
       <StyledNavigator> 
@@ -107,7 +106,7 @@ function App() {
     
       <Routes>
         <Route path="/" element={<HomePage AssociationContext={AssociationContext}/>}></Route>
-        <Route path="/dataviewer" element={<DataViewer AssociationContext={AssociationContext}/>} />
+        <Route path="/dataviewer" element={<DataViewerPage AssociationContext={AssociationContext}/>} />
         {jwt === '' && <>
           <Route path="/login" element={<LoginPage AssociationContext={AssociationContext}/>} />
           <Route path="/register" element={<RegisterPage AssociationContext={AssociationContext}/>} />

@@ -58,6 +58,7 @@ const ControlPanel = ({ debug = false }) => {
     setActiveObject,
     cosemList,
     setCosemList,
+    AssociationContext
   } = useContext(GuiStateContext);
   const handler = useContext(PanelHandlerContext);
 
@@ -202,7 +203,7 @@ const ControlPanel = ({ debug = false }) => {
         itemList={versionList}
         activeItem={activeVersion}
         showSearchBox={false}
-        showDeleteItem={true}
+        showDeleteItem={AssociationContext.jwt !== ''}
         onDelete={onDeleteVersion}
         onItemClicked={onClickVersion}
       ></PanelContainer>
@@ -216,6 +217,13 @@ const ControlPanel = ({ debug = false }) => {
         showDeleteItem={false}
         onItemClicked={onClickObject}
       ></PanelContainer>
+
+      <div>
+        <button>Download</button>
+        <br />
+        
+        {AssociationContext.jwt !== '' && <button>Submit Change</button>}
+      </div>
     </section>
   );
 };

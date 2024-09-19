@@ -323,7 +323,7 @@ const DetailedInformation = () => {
             } */}
           </tr>
           {
-            activeNode._dtype.includes('OctetString') ? 
+            activeNode._dtype.includes('OctetString') || activeNode._dtype.includes('VisibleString') ? 
             <tr>
               <th>Length</th>
               <td>
