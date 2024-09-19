@@ -264,7 +264,7 @@ const DetailedInformation = () => {
         <tbody>
           {
             Object.keys(activeNode.enumChoices).map((enum_code, idx) => {
-              return <tr className={idx%2==0 && "tr-secondary"} key={`${activeNode.title}-enum-info-${enum_code}`}>
+              return <tr className={idx%2==0 ? "tr-secondary":""} key={`${activeNode.title}-enum-info-${enum_code}`}>
                 <td className='enum-code'>{enum_code}</td>
                 <td>{activeNode.enumChoices[enum_code]}</td>
               </tr>

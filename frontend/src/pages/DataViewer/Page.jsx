@@ -128,49 +128,49 @@ const DataViewerPage = ({AssociationContext}) => {
   return (
     <GuiStateContext.Provider value={GuiStateDefault}>
       <PanelHandlerContext.Provider value={ControlPanelEvtHandler}>
-        <div id="page-dataviewer">
-          <section id="content-selector">
-            <ControlPanel></ControlPanel>
-          </section>
           <WorkItemPresentationContext.Provider
             value={ObjectPresentationContextValue}
           >
-            <div id="content-presentation">
-              <div id="preview-title">
-                {activeWorkItem && (
-                  <>
-                    <span>{`${activeObject}`}</span>
-                    <div>
-                      <span className="prv-obis">
-                        {activeWorkItem.logicalName}
-                      </span>
-                    </div>
-                    <div>
-                      {activeWorkItem === null
-                        ? ""
-                        : `Class ID: ${activeWorkItem.classId}`}
-                    </div>
-                    <div>
-                      {activeNodeTreeId === null
-                        ? ""
-                        : `Attribute: ${activeNodeTreeId}`}
-                    </div>
-                  </>
-                )}
-              </div>
-              <div id="preview-content">
-                {activeWorkItem && (
-                  <>
-                    <NodeView></NodeView>
-                    {activeNode !== null && (
-                      <AttributePresentation></AttributePresentation>
+            <div id="page-dataviewer">
+              <section id="content-selector">
+                <ControlPanel></ControlPanel>
+              </section>
+                <div id="content-presentation">
+                  <div id="preview-title">
+                    {activeWorkItem && (
+                      <>
+                        <span>{`${activeObject}`}</span>
+                        <div>
+                          <span className="prv-obis">
+                            {activeWorkItem.logicalName}
+                          </span>
+                        </div>
+                        <div>
+                          {activeWorkItem === null
+                            ? ""
+                            : `Class ID: ${activeWorkItem.classId}`}
+                        </div>
+                        <div>
+                          {activeNodeTreeId === null
+                            ? ""
+                            : `Attribute: ${activeNodeTreeId}`}
+                        </div>
+                      </>
                     )}
-                  </>
-                )}
-              </div>
+                  </div>
+                  <div id="preview-content">
+                    {activeWorkItem && (
+                      <>
+                        <NodeView></NodeView>
+                        {activeNode !== null && (
+                          <AttributePresentation></AttributePresentation>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
             </div>
           </WorkItemPresentationContext.Provider>
-        </div>
       </PanelHandlerContext.Provider>
     </GuiStateContext.Provider>
   );

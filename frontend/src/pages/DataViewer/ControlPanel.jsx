@@ -1,7 +1,9 @@
 import { useContext, useState, useEffect } from "react";
 import { GuiStateContext } from "./Context/AppContext";
 import { PanelHandlerContext } from "./Context/PanelHandlerContext";
+import { WorkItemPresentationContext } from "./Context/WorkitemContext";
 import PanelContainer from "./Components/Panel";
+import axios from "axios";
 
 const data_meterList = ["Dev", "RUBY", "SPAIN"];
 const data_versionList = {
@@ -60,6 +62,9 @@ const ControlPanel = ({ debug = false }) => {
     setCosemList,
     AssociationContext
   } = useContext(GuiStateContext);
+  const { workItem } = useContext(
+    WorkItemPresentationContext
+  );
   const handler = useContext(PanelHandlerContext);
 
   const [filteredCosem, setFilteredCosem] = useState(cosemList);
@@ -165,6 +170,57 @@ const ControlPanel = ({ debug = false }) => {
     setFilteredCosem(cosemList.filter((cosem) => cosem.toLowerCase().includes(search_text_input.toLowerCase())));
   }
 
+  function request_download(){
+    console.log(`Request to download db. Project: ${activeProject} -- ${activeVersion}`);
+    if (activeProject !== '' && activeVersion !== ''){
+        // setWaitingBox(true);
+        window.location.href = `http://10.23.40.185/api/data/download/${activeProject}/${activeVersion}`
+
+        alert('Please Wait! File will be sent soon')
+
+        // setTimeout(() => {
+            // setWaitingBox(false);
+        // }, 3000);
+    }
+}
+
+  const send_changes = () => {
+      const payload = {
+          "projectname":activeProject,
+          "version":activeVersion,
+          "workfile":workItem,
+      }
+
+      if(activeProject !== 'TEMPORARY'){
+          axios.post(`http://10.23.40.185/api/project/update`, payload)
+              .then((resp)=>{
+                  if (resp.data === 'OK'){
+                      alert(`Update ${workItem.objectName} successfull`)
+                  }
+              })
+              .catch((error)=>{
+                  console.log(`ERROR: ${error}`);
+              }
+          )
+      }
+      else{
+          axios.post(`http://10.23.40.185/api/project/temporary/update`, payload, {
+              headers:{
+                  Authorization: `Bearer ${AssociationContext.jwt}`
+              }
+          })
+              .then((resp)=>{
+                  if (resp.data === 'OK'){
+                      alert(`Update ${workItem.objectName} successfull`)
+                  }
+              })
+              .catch((error)=>{
+                  console.log(`ERROR: ${error}`);
+              }
+      )
+      }
+  }
+
   if (meterList.length === 0) {
     getProjectList();
   }
@@ -219,10 +275,10 @@ const ControlPanel = ({ debug = false }) => {
       ></PanelContainer>
 
       <div>
-        <button>Download</button>
+        <button onClick={()=>request_download()}>Convert To DB</button>
         <br />
         
-        {AssociationContext.jwt !== '' && <button>Submit Change</button>}
+        {AssociationContext.jwt !== '' && <button onClick={()=>send_changes()}>Submit Change</button>}
       </div>
     </section>
   );
