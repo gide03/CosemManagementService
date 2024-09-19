@@ -13,11 +13,30 @@ const ContentWrapper = styled.div`
 
   table {
     font-size: smaller;
+
+    .collapse{
+    }
+    
+    .tr-primary{
+      background-color: #747474ba;
+      color: white;
+    }
+
+    .tr-secondary{
+      background-color: #d2d2d2ba;
+    }
+
   }
 
   th {
     text-align: left;
   }
+
+  .enum-code{
+    text-align: center;
+  }
+  
+  
 `;
 
 const ObjectInformation = () => {
@@ -115,12 +134,20 @@ const DetailedInformation = () => {
   const [modifier, setModifier] = useState(activeNode.modifier);
   const [isChoice, setIsChoice] = useState(activeNode.isChoice);
 
+  // const [isAscii, setIsAscii] = useState(activeNode.is_ASCII);
+  // const [isBytes, setIsBytes] = useState(activeNode.is_ByteArray);
+  // const [isString, setIsString] = useState(activeNode.is_VisibleString);
+
   useEffect(()=>{
     console.log('Change active node')
     setDefaultValue(activeNode.defaultValue)
     setMinValue(activeNode.minValue)
     setMaxValue(activeNode.maxValue)
     setModifier(activeNode.modifier)
+
+    // if (activeNode.is_ASCII && activeNode.is_ByteArray && activeNode.is_VisibleString){
+    //   update_octetStringView(1);
+    // }
   }, [activeNode])
 
   const update_defaultValue = (value) => {
@@ -139,10 +166,32 @@ const DetailedInformation = () => {
     activeNode.modifier = value;
     setModifier(value);
   }
+  const update_stringLength = (value) => {
+    activeNode.minValue = value; setMinValue(value);
+    activeNode.maxValue = value; setMaxValue(value);
+  }
   const update_isChoice = (value) => {
     activeNode.isChoice = value;
     setIsChoice(value);
   }
+  // const update_octetStringView = (value) => {
+  //   /**
+  //    * value: (1) byte array (2) ascii (3) visible string
+  //    */
+  //   if (value === 1){
+  //     activeNode.is_ByteArray = true; setIsBytes(true);
+  //     activeNode.is_ASCII = false; setIsAscii(false);
+  //     activeNode.is_VisibleString = false; setIsString(false);
+  //   }else if(value == 2){
+  //     activeNode.is_ByteArray = false; setIsBytes(false);
+  //     activeNode.is_ASCII = true; setIsAscii(true);
+  //     activeNode.is_VisibleString = false; setIsString(false);
+  //   }else if(value == 3){
+  //     activeNode.is_ByteArray = false; setIsBytes(false);
+  //     activeNode.is_ASCII = false; setIsAscii(false);
+  //     activeNode.is_VisibleString = true; setIsString(true);
+  //   }
+  // }
 
   /**
    * TODO [1]: Render Structure data structure
@@ -163,19 +212,19 @@ const DetailedInformation = () => {
   ){
     return <div>
       <h3>Enumeration Info</h3>
-      <table>
+      <table className='collapse grid'>
         <thead>
-          <tr>
-            <th>Enumeration Code</th>
+          <tr className="tr-primary">
+            <th>Enum Code</th>
             <th>Description</th>
           </tr>
         </thead>
         <tbody>
           {
-            Object.keys(activeNode.enumChoices).map((idx) => {
-              return <tr key={`${activeNode.title}-enum-info-${idx}`}>
-                <td>{idx}</td>
-                <td>{activeNode.enumChoices[idx]}</td>
+            Object.keys(activeNode.enumChoices).map((enum_code, idx) => {
+              return <tr className={idx%2==0 && "tr-secondary"} key={`${activeNode.title}-enum-info-${enum_code}`}>
+                <td className='enum-code'>{enum_code}</td>
+                <td>{activeNode.enumChoices[enum_code]}</td>
               </tr>
             })
           }
@@ -219,19 +268,46 @@ const DetailedInformation = () => {
         <tbody>
           <tr>
             <th>Default Value</th>
-            <input type='text' value={activeNode.defaultValue} onChange={(e)=>{update_defaultValue(e.target.value)}}></input>
+            <td>
+              <input type='text' value={activeNode.defaultValue} onChange={(e)=>{update_defaultValue(e.target.value)}}></input>
+            </td>
+            {/* {
+              activeNode._dtype.includes('OctetString') && <>
+                <th>View As</th>
+                <td><label><input type='checkbox' checked={activeNode.is_ByteArray} onChange={()=>update_octetStringView(1)}></input> Bytes</label></td>
+                <td><label><input type='checkbox' checked={activeNode.is_ASCII} onChange={()=>update_octetStringView(2)}></input> ASCII</label></td>
+                <td><label><input type='checkbox' checked={activeNode.is_VisibleString} onChange={()=>update_octetStringView(3)}></input> VisibleString</label></td>
+              </>
+            } */}
           </tr>
-          <tr>
-            <th>Min Value</th>
-            <input type='text' value={activeNode.minValue} onChange={(e)=>{update_minValue(e.target.value)}}></input>
-          </tr>
-          <tr>
-            <th>Max Value</th>
-            <input type='text' value={activeNode.maxValue} onChange={(e)=>{update_maxValue(e.target.value)}}></input>
-          </tr>
+          {
+            activeNode._dtype.includes('OctetString') ? 
+            <tr>
+              <th>Length</th>
+              <td>
+                <input type='text' value={activeNode.maxValue} onChange={(e)=>{update_stringLength(e.target.value)}}></input>
+              </td>
+            </tr>:
+            <>
+              <tr>
+                <th>Min Value</th>
+                <td>
+                  <input type='text' value={activeNode.minValue} onChange={(e)=>{update_minValue(e.target.value)}}></input>
+                </td>
+              </tr>
+              <tr>
+                <th>Max Value</th>
+                <td>
+                  <input type='text' value={activeNode.maxValue} onChange={(e)=>{update_maxValue(e.target.value)}}></input>
+                </td>
+              </tr>
+            </>
+          }
           <tr>
             <th>Modifier</th>
-            <input type='text' value={activeNode.modifier} onChange={(e)=>{update_modifier(e.target.value)}}></input>
+            <td>
+              <input type='text' value={activeNode.modifier} onChange={(e)=>{update_modifier(e.target.value)}}></input>
+            </td>
           </tr>
           {
             activeNode._dtype.includes('Unsigned') && <tr>
