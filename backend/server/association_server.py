@@ -48,7 +48,17 @@ def login():
     db = client['user']
     collection = db['users']
     user_find_result = collection.find({"email":email})
-    user_find_result = [user for user in user_find_result][0]
+    user_find_result = [user for user in user_find_result]
+    if len(user_find_result) == 0:
+        resp = ErrorMessage(
+            400, 
+            "Bad Request", 
+            [{"message" : "unnable to find email"}], 
+            [{"data" : f"unnable to find email"}]
+        )
+        return jsonify(resp), 400
+    
+    user_find_result = user_find_result[0]
     print(user_find_result)
     identity = [user_find_result[_key] for _key in user_find_result][1:]
 
