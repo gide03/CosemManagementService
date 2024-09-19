@@ -81,11 +81,6 @@ const AttributeInformation = () => {
       return accessRights[clientElement]["attribute"][rootNodeId - 1];
     });
 
-    // console.debug("Access Rights UI");
-    // console.debug(rootNodeId);
-    // console.debug(accessRights);
-    // console.debug(clientAccessRight);
-
     return (
       <table>
         <tbody>
@@ -121,13 +116,47 @@ const AttributeInformation = () => {
             <AccessRights></AccessRights>
           </td>
         </tr>
+        {
+          Object.keys(workItem.captureObject).length > 0 && activeNode._dtype === "Array" &&
+        <tr>
+          <th>
+            Capture Objects
+          </th>
+          <td>
+            <table>
+              <thead>
+                <tr className='tr-primary'>
+                  <th>Object Name</th>
+                  <th>Class ID</th>
+                  <th>Logical Name</th>
+                  <th>Att</th>
+                  <th>Data Index</th>
+                  <th>Is Optional</th>
+                  <th>Is Default</th>
+                </tr>
+              </thead>
+              <tbody>
+                {
+                  Object.keys(workItem.captureObject).map((c_obj)=>{
+                    const row = workItem.captureObject[c_obj].map((data, idx)=>{return <td key={`td-${idx}`}>{data}</td>})
+
+                    return <tr key={`c-obj-${c_obj}`}>
+                      {row}
+                    </tr>
+                  })
+                }
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        }
       </tbody>
     </table>
   );
 };
 
 const DetailedInformation = () => {
-  const {activeNode} = useContext(WorkItemPresentationContext);
+  const {activeNode, workItem} = useContext(WorkItemPresentationContext);
   const [defaultValue, setDefaultValue] = useState(activeNode.defaultValue);
   const [minValue, setMinValue] = useState(activeNode.minValue);
   const [maxValue, setMaxValue] = useState(activeNode.maxValue);
@@ -203,7 +232,20 @@ const DetailedInformation = () => {
     return <div>Structure</div>
   }
   else if (activeNode._dtype === 'Array'){
-    return <div>Array</div>
+    return <div>
+      <table>
+        <tbody>
+          <tr>
+            <th>Minimum Size</th>
+            <td><input type="text" value={activeNode.minValue} onChange={(e)=>{update_minValue(e.target.value)}}/></td>
+          </tr>
+          <tr>
+            <th>Maximum Size</th>
+            <td><input type="text" value={activeNode.maxValue} onChange={(e)=>{update_maxValue(e.target.value)}}/></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   }
   else if (
     activeNode._dtype === 'EnumeratedDTO' ||
