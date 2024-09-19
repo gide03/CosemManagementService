@@ -62,10 +62,10 @@ const AttributeInformation = () => {
       return accessRights[clientElement]["attribute"][rootNodeId - 1];
     });
 
-    console.debug("Access Rights UI");
-    console.debug(rootNodeId);
-    console.debug(accessRights);
-    console.debug(clientAccessRight);
+    // console.debug("Access Rights UI");
+    // console.debug(rootNodeId);
+    // console.debug(accessRights);
+    // console.debug(clientAccessRight);
 
     return (
       <table>
@@ -113,6 +113,15 @@ const DetailedInformation = () => {
   const [minValue, setMinValue] = useState(activeNode.minValue);
   const [maxValue, setMaxValue] = useState(activeNode.maxValue);
   const [modifier, setModifier] = useState(activeNode.modifier);
+  const [isChoice, setIsChoice] = useState(activeNode.isChoice);
+
+  useEffect(()=>{
+    console.log('Change active node')
+    setDefaultValue(activeNode.defaultValue)
+    setMinValue(activeNode.minValue)
+    setMaxValue(activeNode.maxValue)
+    setModifier(activeNode.modifier)
+  }, [activeNode])
 
   const update_defaultValue = (value) => {
     activeNode.defaultValue = value;
@@ -130,6 +139,10 @@ const DetailedInformation = () => {
     activeNode.modifier = value;
     setModifier(value);
   }
+  const update_isChoice = (value) => {
+    activeNode.isChoice = value;
+    setIsChoice(value);
+  }
 
   /**
    * TODO [1]: Render Structure data structure
@@ -137,7 +150,6 @@ const DetailedInformation = () => {
    * TODO [3]: Render if data could be enumerated
    * TODO [4]: 
    */
-  console.log(activeNode);
   if (activeNode._dtype === 'Structure'){
     return <div>Structure</div>
   }
@@ -146,7 +158,8 @@ const DetailedInformation = () => {
   }
   else if (
     activeNode._dtype === 'EnumeratedDTO' ||
-    Object.keys(activeNode.enumChoices).length > 0
+    Object.keys(activeNode.enumChoices).length > 0 ||
+    activeNode.isChoice
   ){
     return <div>
       <h3>Enumeration Info</h3>
@@ -183,19 +196,55 @@ const DetailedInformation = () => {
                   })
                 }
               </select>
-
             </td>
           </tr>
           <tr>
             <th>Modifier</th>
             <td><input type='text' defaultValue={activeNode.modifier} onChange={(e)=>{update_modifier(e.target.value)}}></input></td>
           </tr>
+          {activeNode._dtype.includes('Unsigned') && <tr>
+            <td>
+                <label>
+                  <input type='checkbox' checked={activeNode.isChoice} onChange={(e)=>{update_isChoice(e.target.checked)}}></input> Set as enumearted?
+                </label>
+              </td>
+          </tr>}
         </tbody>
       </table>
     </div>
   }
   else{
-    return <div>{activeNode._dtype}</div>
+    return <div>
+      <table>
+        <tbody>
+          <tr>
+            <th>Default Value</th>
+            <input type='text' value={activeNode.defaultValue} onChange={(e)=>{update_defaultValue(e.target.value)}}></input>
+          </tr>
+          <tr>
+            <th>Min Value</th>
+            <input type='text' value={activeNode.minValue} onChange={(e)=>{update_minValue(e.target.value)}}></input>
+          </tr>
+          <tr>
+            <th>Max Value</th>
+            <input type='text' value={activeNode.maxValue} onChange={(e)=>{update_maxValue(e.target.value)}}></input>
+          </tr>
+          <tr>
+            <th>Modifier</th>
+            <input type='text' value={activeNode.modifier} onChange={(e)=>{update_modifier(e.target.value)}}></input>
+          </tr>
+          {
+            activeNode._dtype.includes('Unsigned') && <tr>
+              <td>
+                <label>
+                  <input type='checkbox' onChange={(e)=>{update_isChoice(e.target.checked)}}></input> Set as enumearted?
+                </label>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   }
   
 }
