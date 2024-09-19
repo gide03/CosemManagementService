@@ -68,7 +68,10 @@ const PanelContainer = ({
   activeItem = "",
   onDelete = (item) => {},
   onItemClicked = (item) => {},
+  onSearch = (e) => {console.log(`Search ${e.target.value}`)}
 }) => {
+  
+
   /**
    * itemClickEventFilter
    * filter where is the cursor click, is it a button, span, etc. Each element may have its own click handler
@@ -91,7 +94,7 @@ const PanelContainer = ({
     <StyledPanelContainer>
       <StyledPanelTitleContainer>
         <span id={`PanelContainer-${title}`}>{title}</span>
-        {showSearchBox ? <input placeholder="Search"></input> : <></>}
+        {showSearchBox ? <input placeholder="Search" onChange={(e) => onSearch(e.target.value)}></input> : <></>}
       </StyledPanelTitleContainer>
       <StyledScrollBoxContainer>
         {itemList.map((item, idx) => {

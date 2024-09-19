@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { GuiStateContext } from "./Context/AppContext";
 import { PanelHandlerContext } from "./Context/PanelHandlerContext";
 import PanelContainer from "./Components/Panel";
@@ -38,7 +38,7 @@ const data_versionList = {
  * Widget interface for page control panel
  *
  * Parameter:
- * - handler `object` required key:
+ * - handler `object` required key:Details
  *    - getProjectList `function`
  *    - onDeleteProject `onDeleteProject`
  * ....
@@ -59,8 +59,12 @@ const ControlPanel = ({ debug = false }) => {
     cosemList,
     setCosemList,
   } = useContext(GuiStateContext);
-
   const handler = useContext(PanelHandlerContext);
+
+  const [filteredCosem, setFilteredCosem] = useState(cosemList);
+  useEffect(() => {
+    setFilteredCosem(cosemList);
+  }, [cosemList])
 
   const getProjectList = () => {
     console.log("Fetch data");
@@ -152,6 +156,14 @@ const ControlPanel = ({ debug = false }) => {
     handler.onClickObject(item);
   };
 
+  const onSearch = (search_text_input) => {
+    if (search_text_input === 0){
+        setFilteredCosem([...cosemList]);
+        return;
+    }
+    setFilteredCosem(cosemList.filter((cosem) => cosem.toLowerCase().includes(search_text_input.toLowerCase())));
+  }
+
   if (meterList.length === 0) {
     getProjectList();
   }
@@ -197,9 +209,10 @@ const ControlPanel = ({ debug = false }) => {
 
       <PanelContainer
         title="Cosem object list"
-        itemList={cosemList}
+        itemList={filteredCosem}
         activeItem={activeObject}
         showSearchBox={true}
+        onSearch={onSearch}
         showDeleteItem={false}
         onItemClicked={onClickObject}
       ></PanelContainer>
